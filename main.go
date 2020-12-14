@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"regexp"
 	"encoding/json"
 	"fmt"
 	"index/suffixarray"
@@ -13,7 +14,7 @@ import (
 
 func main() {
 	searcher := Searcher{}
-	err := searcher.Load("completeworks.txt")
+	err := searcher.Load("completeworksfix.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -73,10 +74,13 @@ func (s *Searcher) Load(filename string) error {
 }
 
 func (s *Searcher) Search(query string) []string {
-	idxs := s.SuffixArray.Lookup([]byte(query), -1)
+  query = "(?is)[^\n]*"+query+".*?(\n\n|$)"
+  regex := regexp.MustCompile(query)
+	idxs := s.SuffixArray.FindAllIndex(regex, -1)
 	results := []string{}
 	for _, idx := range idxs {
-		results = append(results, s.CompleteWorks[idx-250:idx+250])
+    start, end := idx[0],idx[1]
+    results = append(results, s.CompleteWorks[start:end])
 	}
-	return results
+	rweturn results
 }
