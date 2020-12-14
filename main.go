@@ -82,5 +82,5 @@ func (s *Searcher) Search(query string) []string {
     start, end := idx[0],idx[1]
     results = append(results, s.CompleteWorks[start:end])
 	}
-	rweturn results
+	return results
 }
